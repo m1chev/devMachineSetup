@@ -3,35 +3,54 @@
   become: yes
   vars:
     # Change the 'user' and the 'dotfiles_repo'
-    - user: 'm1chev'
+    - user: 'michev'
     - dotfiles_repo: 'https://github.com/m1chev/.dotfilesLinux'
     - ssh_key: '.ssh/id_rsa'
 
   tasks:
 
-    - name: Install system variables.
-      ansible.builtin.package:
-        name:
-          - "python3-neovim"
-          - "powerline-fonts"
-          - "docker-ce"
-          - "docker-ce-cli"
-          - "containerd.io"
-          - terraform
-          - vagrant
-          - podman
-          - nodejs
-          - stow
-          - "java-latest-openjdk-devel.x86_64"
-          - maven
-          - fish
-          - htop
-          - element
-          - "dnf-plugins-core" # Fedora, CentOS only
-          - "distribution-gpg-keys" # Fedora, CentOS only
-          - "@development-tools"
-          - "gnome-tweak-tool" # Gnome only
-          - "evolution-ews" # Gnome notifications for outlook
-          - "obs-studio"
-        state: latest
+    # - name: Install system variables.
+      # ansible.builtin.package:
+        # name:
+          # - git
+          # - "python3-neovim"
+          # - "powerline-fonts"
+          # - "docker-ce"
+          # - "docker-ce-cli"
+          # - "containerd.io"
+          # - terraform
+          # - vagrant
+          # - podman
+          # - nodejs
+          # - stow
+          # - "java-latest-openjdk-devel.x86_64"
+          # - maven
+          # - fish
+          # - htop
+          # - element
+          # - "dnf-plugins-core" # Fedora, CentOS only
+          # - "distribution-gpg-keys" # Fedora, CentOS only
+          # - "@development-tools"
+          # - "gnome-tweak-tool" # Gnome only
+          # - "evolution-ews" # Gnome notifications for outlook
+          # - "obs-studio"
+        # state: latest
 
+    - name: Check out dotFiles from repository.
+      git:
+        repo: "{{ dotfiles_repo }}"
+        # dest: /tmp
+        dest: /home/{{ user }}/.dotfilesLinux
+        # accept_hostkey: yes
+        # key_file: "/home/{{ user }}/{{ ssh_key }}"
+      delegate_to: localhost
+      run_once: true
+      become: no
+
+    # - name: Copy dotfiles in home dir.
+      # copy:
+        # src: /tmp/dotfiles
+        # dest: "/home/{{ user }}"
+        # owner: "{{ user }}"
+        # group: "{{ user }}"
+        # mode: '0644'
