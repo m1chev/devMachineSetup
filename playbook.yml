@@ -1,0 +1,37 @@
+---
+- hosts: localhost
+  become: yes
+  vars:
+    # Change the 'user' and the 'dotfiles_repo'
+    - user: 'm1chev'
+    - dotfiles_repo: 'https://github.com/m1chev/.dotfilesLinux'
+    - ssh_key: '.ssh/id_rsa'
+
+  tasks:
+
+    - name: Install system variables.
+      ansible.builtin.package:
+        name:
+          - "python3-neovim"
+          - "powerline-fonts"
+          - "docker-ce"
+          - "docker-ce-cli"
+          - "containerd.io"
+          - terraform
+          - vagrant
+          - podman
+          - nodejs
+          - stow
+          - "java-latest-openjdk-devel.x86_64"
+          - maven
+          - fish
+          - htop
+          - element
+          - "dnf-plugins-core" # Fedora, CentOS only
+          - "distribution-gpg-keys" # Fedora, CentOS only
+          - "@development-tools"
+          - "gnome-tweak-tool" # Gnome only
+          - "evolution-ews" # Gnome notifications for outlook
+          - "obs-studio"
+        state: latest
+

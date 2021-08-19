@@ -11,3 +11,6 @@ Instructions for some of the distros:
  - OpenSuse: `sudo zypper install ansible -y`
  - Debian: `sudo apt install ansible -y`
  - Arch: `sudo pacman -S ansible -y`
+
+## Execution Command
+`ansible-playbook playbook.yml --ask-become-pass`
