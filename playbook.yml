@@ -5,6 +5,7 @@
     # Change the 'user' and the 'dotfiles_repo'
     - user: 'michev'
     - dotfiles_repo: 'https://github.com/m1chev/.dotfilesLinux'
+    - dotfiles_dir: "/home/{{ user }}/.dotfilesLinux"
     - ssh_key: '.ssh/id_rsa'
 
   tasks:
@@ -36,21 +37,30 @@
           # - "obs-studio"
         # state: latest
 
+    # ________________________________________
+    # Setting configuration files from git repo
+    - stat: path={{ dotfiles_dir }}
+      register: dot_file
+
     - name: Check out dotFiles from repository.
       git:
         repo: "{{ dotfiles_repo }}"
-        # dest: /tmp
-        dest: /home/{{ user }}/.dotfilesLinux
-        # accept_hostkey: yes
-        # key_file: "/home/{{ user }}/{{ ssh_key }}"
+        dest: "{{ dotfiles_dir }}"
       delegate_to: localhost
       run_once: true
       become: no
+      when: dot_file.stat.exists == false
 
-    # - name: Copy dotfiles in home dir.
-      # copy:
-        # src: /tmp/dotfiles
-        # dest: "/home/{{ user }}"
-        # owner: "{{ user }}"
-        # group: "{{ user }}"
-        # mode: '0644'
+    # To apply all settings through stow should remove 'n' argument
+    # Otherwise just comment the block below
+    - name: Test some Shell commands.
+      shell: >
+        cd {{ dotfiles_dir }};
+        stow -nvSt ~ bash fish note spacevim vim
+      register: shellCommand
+    # ________________________________________
+
+    # Just for debugging purposes
+    # - name: Print the output from shell command.
+      # debug:
+        # var: shellCommand.stderr
