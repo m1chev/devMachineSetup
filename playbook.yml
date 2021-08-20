@@ -2,17 +2,12 @@
 - hosts: localhost
   become: yes
 
-  vars_prompt:
-
-    - name: "user"
-      prompt: "What is the user name of the dev machine?"
-      private: no
-
-  vars:
-    # Change the 'user' and the 'dotfiles_repo'
-    - user: "{{ user }}"
-    - dotfiles_repo: "https://github.com/m1chev/.dotfilesLinux"
-    - dotfiles_dir: "/home/{{ user }}/.dotfilesLinux"
+  # Variables in the file:
+  # user - the user of the machine
+  # dotfiles_repo - git repo of the config files
+  # dotfiles_dir - destination of the config files
+  vars_files:
+    - vars.yml
 
   tasks:
 
@@ -62,7 +57,7 @@
 
     # To apply all settings through stow should remove 'n' argument
     # Otherwise just comment the block below
-    - name: Test some Shell commands.
+    - name: Apply config files
       shell: >
         cd {{ dotfiles_dir }};
         stow -nvSt ~ bash fish note spacevim vim
