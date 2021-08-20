@@ -17,6 +17,7 @@
   tasks:
 
     - name: Install system variables.
+      tags: install
       ansible.builtin.package:
         name:
           - git
@@ -47,6 +48,7 @@
     # Setting configuration files from git repo
     - stat: path={{ dotfiles_dir }}
       register: dot_file
+      tags: conf
 
     - name: Check out dotFiles from repository.
       git:
@@ -56,18 +58,20 @@
       run_once: true
       become: no
       when: dot_file.stat.exists == false
+      tags: conf
 
     # To apply all settings through stow should remove 'n' argument
     # Otherwise just comment the block below
     - name: Test some Shell commands.
       shell: >
         cd {{ dotfiles_dir }};
-        pwd
-        # stow -nvSt ~ bash fish note spacevim vim
+        stow -nvSt ~ bash fish note spacevim vim
       register: shellCommand
+      tags: conf
     # ________________________________________
 
     # Just for debugging purposes
     - name: Print the output from shell command.
       debug:
         var: shellCommand.stdout
+      tags: debug
